@@ -1,0 +1,135 @@
+server:
+sudo apt-get update
+ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/ubuntu/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/ubuntu/.ssh/id_rsa
+Your public key has been saved in /home/ubuntu/.ssh/id_rsa.pub
+copy id_rsa.pub key and paste client authorized_keys
+client:
+paste server id_rsa.pub.key file cd .ssh/authorized_keys/
+server:
+ssh connection:
+ssh ubuntu@client ipaddress (connection esatblished)
+
+ansible server to client connection:
+server:
+sudo apt-get install ansible -y
+sudo apt-get install python3-pip python3-apt python3-dev -y
+checking installaed or not
+ansible --version
+python3 --version
+
+creating ansible folder
+ansible folder inside ansible.cfg file and hosts
+
+hosts file
+[node] means name of client or web server or db 
+3.141.153.82 ip address client
+
+[control]
+control ansible_connection=local
+
+save it
+
+open ansible.cfg file
+[defaults]
+inventory = ./hosts (where you can save ipaddress for clients and inventory file
+
+ansible server to client connection established
+ansible node -m ping (node  means name of the client)
+
+
+3.141.153.82 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+
+connection completed ansible server to client
+
+
+yaml file creation:
+
+creating deploy.yaml
+creating roles
+roles inside 
+.
+└── apache2
+    ├── files
+    │   └── index.html
+    ├── handlers
+    │   └── main.yaml
+    ├── tasks
+    │   └── main.yaml
+    ├── templates
+    │   └── hello.html.j2
+    └── vars
+        └── main.yaml
+
+files:
+creating index.html file
+inside file writting code
+tasks:
+creating main.yaml file
+inside yaml file writting yaml script & installation configuration 
+
+- name: apache2_install
+  apt:
+    name: apache2
+    state: present
+- file:
+    path: /var/www/html/index.html
+    state: absent
+- name: deploy_code
+  copy:
+    src: /home/ubuntu/ansible/roles/apache2/files/index.html
+    dest: /var/www/html/
+- name: deploy_code
+  template:
+       src: /home/ubuntu/ansible/roles/apache2/templates/hello.html.j2
+       dest: /var/www/html
+- name: install_packg
+  apt:
+    name: "{{packg_cmd}}"
+    state: present
+  notify:
+  - restart_apache2
+handlers:
+creating main.yaml file ( mention apalications restart)
+- name: restart_apache2
+  service:
+     name: apache2
+     state: restarted
+
+vars: session mention application names easy to way
+packg_cmd: tree
+name: "raghu"
+
+
+templates:
+hello.html.j2
+<h1> this is duvva {{ name }} </h1>
+jinjja html file when mention name exicute name = var (raghu)
+
+
+ansible-vault (encrypt & decrypt this means code is encrypt once password mention but file is opened while password is entered is working can edit)
+encrypt:
+ansible-vault encrypt deploy.yaml
+password:
+confirm password:
+
+edit file:
+ansible-vault edit deploy.yaml
+password:
+
+decrypt:
+ansible-vault decrypt deploy.yaml
+
+ansibel-vault encrypt yaml file not working that time we are using
+sudo ansible-playbook deploy.yaml --ask-vault-pass
+working

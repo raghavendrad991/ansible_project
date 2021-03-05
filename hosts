@@ -1,0 +1,6 @@
+[node]
+3.141.153.82
+
+[control]
+control ansible_connection=local
+
